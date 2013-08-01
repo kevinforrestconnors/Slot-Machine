@@ -286,7 +286,7 @@ function spin() {
     slot1intr = setInterval(function() {
         
         c.clearRect (0, 50, 275, 250);
-        slot[1].obj = slotWheel[1];
+        slot[1].obj = slotWheel[1][j1];
         slot[1].img = slot[1].obj.img;       
         drawSlot(1);
         j1++;
@@ -300,7 +300,7 @@ function spin() {
     slot2intr = setInterval(function() {
         
         c.clearRect (275, 50, 525, 250);
-        slot[2].obj = slotWheel[2];
+        slot[2].obj = slotWheel[2][j2];
         slot[2].img = slot[2].obj.img;       
         drawSlot(2);
         j2++;
@@ -311,16 +311,12 @@ function spin() {
         
     }, 500);
     
-    
-    
-    
-    
     slot3intr = setInterval(function() {
         
         c.clearRect (525, 50, 775, 250);
-        slot[3].obj = slotWheel[3];
+        slot[3].obj = slotWheel[3][j3];
         slot[3].img = slot[3].obj.img;       
-        drawSlot(3); console.log(slot[3], j3);
+        drawSlot(3); 
         j3++;
         
         if (j3 === 8) {
