@@ -1,0 +1,14 @@
+#machineWindow {
+    background-color:black;
+    display: block;
+    margin: 0 auto;
+}
+
+.spin {
+    display: block;
+    margin: 0 auto;
+}
+
+.score, .scoreDesc {
+    text-align: center;
+}
