@@ -383,8 +383,8 @@
           
           spinInterval = setInterval(function() {
             spin(j1);
-            //spin(j1);
-            //spin(j1);
+            spin(j2);
+            spin(j3);
           }, 500);
           
           $('.spin').val('Stop slots!');
@@ -404,10 +404,3 @@
   });
 
 })();
-
-
-
-
-
-
-
