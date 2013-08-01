@@ -395,8 +395,6 @@
          
           $('.spin').val('Spin slots!');
           clearInterval(spinInterval); 
-          clearInterval(slot2intr); 
-          clearInterval(slot3intr);
           game = false;
          
      }
