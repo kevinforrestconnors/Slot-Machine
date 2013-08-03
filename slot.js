@@ -1,4 +1,5 @@
 // Slot Machine
+
 $(function() {
 
     // Vars 
@@ -259,10 +260,10 @@ $(function() {
             c.clearRect(0, 50, 275, 250);
         } 
         else if (slotNum == 2) {
-            c.clearRect(275, 50, 525, 250);
+            c.clearRect(275, 50, 250, 250);
         } 
         else if (slotNum == 3) {
-            c.clearRect(525, 50, 775, 250);
+            c.clearRect(525, 50, 250, 250);
         }
 
         slot[slotNum].obj = slotWheel[slotNum][incr];
@@ -331,8 +332,6 @@ $(function() {
 
     } // end calculatePoints()
 
-
-
     // Binds
     
     var slot1intr;
@@ -371,6 +370,10 @@ $(function() {
     
             } // end for 
             
+            slot[1].speed = randomInteger(150,300);
+            slot[2].speed = randomInteger(150,300);
+            slot[3].speed = randomInteger(150,300);
+            
             var wheel1incr = 0;
             var wheel2incr = 0;
             var wheel3incr = 0;
@@ -379,50 +382,61 @@ $(function() {
                 
                 spin(1, wheel1incr);
                 wheel1incr++;
-                if (wheel1incr === 8) {
+                if (wheel1incr === 8) { // cycle through the wheel
                     wheel1incr = 0;
                 }
+                $('.score').text('Score: ' + numberWithCommas(calculatePoints())); // Insert score with commas (50000 -> 50,000)
                 
-            }, 500);
+            }, slot[1].speed);
             
             slot2intr = setInterval(function () {
                 
                 spin(2, wheel2incr);
                 wheel2incr++;
-                if (wheel2incr === 8) {
+                if (wheel2incr === 8) { // cycle through the wheel
                     wheel2incr = 0;
                 }
+                $('.score').text('Score: ' + numberWithCommas(calculatePoints())); // Insert score with commas (50000 -> 50,000)
                 
-            }, 500);
+            }, slot[2].speed);
             
             slot3intr = setInterval(function () {
                 
                 spin(3, wheel3incr);
                 wheel3incr++;
-                if (wheel3incr === 8) {
+                if (wheel3incr === 8) { // cycle through the wheel
                     wheel3incr = 0;
                 }
-                
-            }, 500);
-            
-            scoreInterval = setInterval(function() {
-                
                 $('.score').text('Score: ' + numberWithCommas(calculatePoints())); // Insert score with commas (50000 -> 50,000)
+                
+            }, slot[3].speed);
+            
+            setInterval(function() {
+                
+                
             
             }, 500);
             
-            $('.buttonsContainer').append('<input type="button" class="stop1 center" value="Stop Slot 1">');
-            $('.buttonsContainer').append('<input type="button" class="stop2 center" value="Stop Slot 2">');
-            $('.buttonsContainer').append('<input type="button" class="stop3 center" value="Stop Slot 3">');
+            $('.buttonsContainer').append('<input type="button" class="stop1 stop" value="Stop Slot 1">');
+            $('.buttonsContainer').append('<input type="button" class="stop2 stop" value="Stop Slot 2">');
+            $('.buttonsContainer').append('<input type="button" class="stop3 stop" value="Stop Slot 3">');
+            
+            var wheelsSpinning = 3;
             
             $('.stop1').click(function () {
                 
                 clearInterval(slot1intr);
                 drawSlot(1);
-                $(this).remove();
-                if ($('.stop2').length == 0 && $('.stop3').length == 0) {
+                wheelsSpinning--;
+                $(this).css({ // blur out buttons
+                    'background': '#CCC',
+                    'color': '#777',
+                    'border': '1px solid #FFF', 
+                    });
+                if (wheelsSpinning === 0) { // If all wheels are stopped, then remove buttons and game ends
                     $('.spin').click();
                 }
+                $(this).unbind();
                 
             }); // end stop1 click
             
@@ -430,10 +444,16 @@ $(function() {
                 
                 clearInterval(slot2intr);
                 drawSlot(2);
-                $(this).remove();
-                if ($('.stop1').length == 0 && $('.stop3').length == 0) {
+                wheelsSpinning--;
+                $(this).css({ // blur out buttons
+                    'background': '#CCC',
+                    'color': '#777',
+                    'border': '1px solid #FFF',
+                    });
+                if (wheelsSpinning === 0) { // If all wheels are stopped, then remove buttons and game ends
                     $('.spin').click();
                 }
+                $(this).unbind();
                 
             }); // end stop2 click
             
@@ -441,17 +461,23 @@ $(function() {
                 
                 clearInterval(slot3intr);
                 drawSlot(3);
-                $(this).remove();
-                if ($('.stop1').length == 0 && $('.stop2').length == 0) {
+                wheelsSpinning--;
+                $(this).css({ // blur out buttons
+                    'background': '#CCC',
+                    'color': '#777',
+                    'border': '1px solid #FFF',
+                    });
+                if (wheelsSpinning === 0) { // If all wheels are stopped, then remove buttons and game ends
                     $('.spin').click();
                 }
+                $(this).unbind();
                 
             }); // end stop3 click
 
             $('.spin').val('Stop All!');
             game = true;
 
-        } else {
+        } else { // If game is running
             
             $('.spin').val('Spin slots!');
             clearInterval(slot1intr);
@@ -462,12 +488,12 @@ $(function() {
             $('.stop3').remove();
             game = false;
 
-        }
+        } // end else
 
-    });
+    }); // end Spin All / Stop All keybind
     
     
     
     
 
-});
+}); // end script
