@@ -5,17 +5,23 @@
 <title>Slot Machine</title>
 
 <link rel='stylesheet' href='slot.css' type='text/css' />
+<script src='modernizer.js'></script>
 
 </head>
 <body>
 
 <main class='main'>
   
-<canvas id='machineWindow' width="800px" height="300px"></canvas>
+<div class='canvasWrap'>
+    <canvas id='machineWindow' width="800px" height="300px"></canvas>    
+</div>
+
 <div class='spinContainer'>
     <input type='button' class='spin' value='Spin Slots!'>   
 </div>
+
 <div class='buttonsContainer'></div>
+
 <br>
 <div class='score'>Score: 0</div>
 <br>

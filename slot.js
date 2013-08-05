@@ -42,13 +42,23 @@ $(function() {
         });
     }
     
-    for (i = 1; i < 7; i += 2) { 
-        $("canvas").drawImage({
-            source: "slotmelon.png",
-            x: (125 * i) + 25,
-            y: -50,
-        });
-    }
+    $("canvas").drawImage({
+        source: "slotmelon.png",
+        x: 150,
+        y: -50,
+    });
+    
+    $("canvas").drawImage({
+        source: "slotcherry.png",
+        x: 400,
+        y: -50,
+    });
+        
+    $("canvas").drawImage({
+        source: "slotbells.png",
+        x: 650,
+        y: -50,
+    });
     
     $("canvas").drawImage({
         source: "slotredgem.png",
@@ -116,6 +126,7 @@ $(function() {
             mult: 7,
             img: 'slot7.png',
             type: 'points',
+            name: 'Lucky 7',
 
         },
 
@@ -125,6 +136,7 @@ $(function() {
             mult: 2,
             img: 'slotbar.png',
             type: 'points',
+            name: 'BAR',
 
         },
 
@@ -134,6 +146,7 @@ $(function() {
             mult: 1,
             img: 'slotbells.png',
             type: 'points',
+            name: 'Bells',
 
         },
 
@@ -143,6 +156,7 @@ $(function() {
             mult: 1,
             img: 'slotredgem.png',
             type: 'gem',
+            name: 'Ruby',
 
         },
 
@@ -152,6 +166,7 @@ $(function() {
             mult: 1,
             img: 'slotgreengem.png',
             type: 'gem',
+            name: 'Emerald',
 
         },
 
@@ -161,6 +176,7 @@ $(function() {
             mult: 1,
             img: 'slotbluegem.png',
             type: 'gem',
+            name: 'Sapphire',
 
         },
 
@@ -170,6 +186,7 @@ $(function() {
             mult: 2,
             img: 'slotmelon.png',
             type: 'fruit',
+            name: 'Melon',
 
         },
 
@@ -179,6 +196,7 @@ $(function() {
             mult: 3,
             img: 'slotcherry.png',
             type: 'fruit',
+            name: 'Cherry',
 
         },
 
@@ -270,13 +288,9 @@ $(function() {
             p++;
             
         }
-        
-        
-        
-        
 
     } // end drawSlot()
-    //*/
+
     
     function getSlotOrder(slot) {
 
@@ -386,8 +400,14 @@ $(function() {
     var slot3intr;
 
     $('.spin').click(function () { // Start and Stop
+    
+        $('#machineWindow').toggleClass('blur'); // blur the edges
 
         if (game === false) {
+            
+            $('.stop1').remove();            
+            $('.stop2').remove();
+            $('.stop3').remove();
 
             resetGame();
             
@@ -421,9 +441,9 @@ $(function() {
             slot[2].speed = randomInteger(15,50);
             slot[3].speed = randomInteger(15,50);
             
-            var wheel1incr = 0, currentObj1 = 0, wheelSpeed1 = 200 / slot[1].speed;
-            var wheel2incr = 0, currentObj2 = 0, wheelSpeed2 = 200 / slot[2].speed;
-            var wheel3incr = 0, currentObj3 = 0, wheelSpeed3 = 200 / slot[3].speed;   
+            var wheel1incr = 50, currentObj1 = 2, wheelSpeed1 = 200 / slot[1].speed;
+            var wheel2incr = 50, currentObj2 = 2, wheelSpeed2 = 200 / slot[2].speed;
+            var wheel3incr = 50, currentObj3 = 2, wheelSpeed3 = 200 / slot[3].speed;   
             
             var redrawNum = 1600;
             
@@ -516,14 +536,18 @@ $(function() {
                 clearInterval(slot1intr);
                 drawSlot(1);
                 wheelsSpinning--;
+                
                 $(this).css({ // blur out buttons
                     'background': '#CCC',
                     'color': '#777',
                     'border': '1px solid #FFF', 
-                    });
+                    })
+                .val(slot[1].obj.name); // replace name
+                
                 if (wheelsSpinning === 0) { // If all wheels are stopped, then remove buttons and game ends
                     $('.spin').click();
                 }
+                
                 $(this).unbind();
                 
             }); // end stop1 click
@@ -533,14 +557,18 @@ $(function() {
                 clearInterval(slot2intr);
                 drawSlot(2);
                 wheelsSpinning--;
+                
                 $(this).css({ // blur out buttons
                     'background': '#CCC',
                     'color': '#777',
                     'border': '1px solid #FFF',
-                    });
+                    })
+                .val(slot[2].obj.name); // replace name
+                
                 if (wheelsSpinning === 0) { // If all wheels are stopped, then remove buttons and game ends
                     $('.spin').click();
                 }
+                
                 $(this).unbind();
                 
             }); // end stop2 click
@@ -550,20 +578,25 @@ $(function() {
                 clearInterval(slot3intr);
                 drawSlot(3);
                 wheelsSpinning--;
+                
                 $(this).css({ // blur out buttons
                     'background': '#CCC',
                     'color': '#777',
                     'border': '1px solid #FFF',
-                    });
+                    })
+                .val(slot[3].obj.name); // replace name
+                
                 if (wheelsSpinning === 0) { // If all wheels are stopped, then remove buttons and game ends
                     $('.spin').click();
                 }
+                
                 $(this).unbind();
                 
             }); // end stop3 click
 
             $('.spin').val('Stop All!');
             game = true;
+            
 
         } else { // If game is running
             
@@ -571,9 +604,25 @@ $(function() {
             clearInterval(slot1intr);
             clearInterval(slot2intr);
             clearInterval(slot3intr);
-            $('.stop1').remove();            
-            $('.stop2').remove();
-            $('.stop3').remove();
+            
+            $('.stop1').css({ // blur out buttons
+                'background': '#CCC',
+                'color': '#777',
+                'border': '1px solid #FFF',
+            }).val(slot[1].obj.name); // replace name
+            
+            $('.stop2').css({ // blur out buttons
+                'background': '#CCC',
+                'color': '#777',
+                'border': '1px solid #FFF',
+            }).val(slot[2].obj.name); // replace name
+            
+            $('.stop3').css({ // blur out buttons
+                'background': '#CCC',
+                'color': '#777',
+                'border': '1px solid #FFF',
+            }).val(slot[3].obj.name); // replace name
+            
             game = false;
 
         } // end else
