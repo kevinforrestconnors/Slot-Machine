@@ -40,7 +40,7 @@ $(function() {
             x: (125 * i) + 25,
             y: 150,
         });
-    }
+    } // draw 3 7s
     
     $("canvas").drawImage({
         source: "slotmelon.png",
@@ -58,7 +58,7 @@ $(function() {
         source: "slotbells.png",
         x: 650,
         y: -50,
-    });
+    }); // melon cherry bells on top
     
     $("canvas").drawImage({
         source: "slotredgem.png",
@@ -76,7 +76,7 @@ $(function() {
         source: "slotbluegem.png",
         x: 650,
         y: 350,
-    });
+    }); // 3 gems on bottom
     
 
     // Slot objects
@@ -228,7 +228,6 @@ $(function() {
     } // end resetGame()
 
 
-
     function getRandomSlot() { // from prizes pick a random slot
 
         var keys = [];
@@ -254,13 +253,13 @@ $(function() {
     function drawSlot(slotNum) {
         
         if (slotNum == 1) {
-            c.clearRect(0, 0, 275, 300);
+            c.clearRect(0, 0, 275, c.height);
         } 
         else if (slotNum == 2) {
-            c.clearRect(275, 0, 250, 300);
+            c.clearRect(275, 0, 250, c.height);
         } 
         else if (slotNum == 3) {
-            c.clearRect(525, 0, 250, 300);
+            c.clearRect(525, 0, 250, c.height);
         }
         
         var p = 0;
@@ -333,7 +332,26 @@ $(function() {
 
     } // end spin()
 
-
+    function correctSlotPosition(slotNum) { // get closest to y: 150.  pretty smart if you ask me
+        
+        j = 1;
+        k = 1;
+        
+        while (slotWheel.position[slotNum - 1] % 200 !== 0) {
+            
+            slotWheel.position[slotNum - 1] += k;
+            k *= -1;
+            j *= -1;
+            k += j;
+            if (slotWheel.position[slotNum - 1] >= 1600) { // cycle through the wheel
+                slotWheel.position[slotNum - 1] = 0;
+            }
+            
+        } // end while 
+        
+        drawSlot(slotNum);
+        
+    } // end correctSlotPosition()
 
     function calculatePoints() {
 
@@ -368,8 +386,15 @@ $(function() {
         if ((currentSlots[0] == currentSlots[1]) && (currentSlots[1] == currentSlots[2])) { // if a triple match
 
             totalPoints *= 10;
+            
+            $('#machineWindow').css({ // glow
+                '-webkit-filter': 'grayscale(0%)',
+                '-mox-filter': 'grayscale(0%)',   
+            });
+            
 
-        } else if ((currentSlots[0].type === currentSlots[1].type) && (currentSlots[1].type === currentSlots[2].type)) { // if similar types
+        } 
+        else if ((currentSlots[0].type === currentSlots[1].type) && (currentSlots[1].type === currentSlots[2].type)) { // if similar types
 
             switch (currentSlots[0].type) {
 
@@ -386,8 +411,21 @@ $(function() {
                 break;
 
             } // end switch
+            
+            $('#machineWindow').css({ //glow less brightly
+                '-webkit-filter': 'grayscale(15%)',
+                '-mox-filter': 'grayscale(15%)',   
+            });
 
         } // end elseif
+        else {
+            
+            $('#machineWindow').css({ //return to normal less brightly
+                '-webkit-filter': 'grayscale(30%)',
+                '-mox-filter': 'grayscale(30%)',   
+            });
+            
+        }
 
         return totalPoints;
 
@@ -437,13 +475,13 @@ $(function() {
     
             } // end for 
             
-            slot[1].speed = randomInteger(15,50);
-            slot[2].speed = randomInteger(15,50);
-            slot[3].speed = randomInteger(15,50);
+            slot[1].speed = 200//randomInteger(25,50);
+            slot[2].speed = 200//randomInteger(25,50);
+            slot[3].speed = 200//randomInteger(25,50);
             
-            var wheel1incr = 50, currentObj1 = 2, wheelSpeed1 = 200 / slot[1].speed;
-            var wheel2incr = 50, currentObj2 = 2, wheelSpeed2 = 200 / slot[2].speed;
-            var wheel3incr = 50, currentObj3 = 2, wheelSpeed3 = 200 / slot[3].speed;   
+            var wheel1incr = 0, currentObj1 = 2, wheelSpeed1 = 200 / slot[1].speed;
+            var wheel2incr = 0, currentObj2 = 2, wheelSpeed2 = 200 / slot[2].speed;
+            var wheel3incr = 0, currentObj3 = 2, wheelSpeed3 = 200 / slot[3].speed;   
             
             var redrawNum = 1600;
             
@@ -535,6 +573,7 @@ $(function() {
                 
                 clearInterval(slot1intr);
                 drawSlot(1);
+                correctSlotPosition(1);
                 wheelsSpinning--;
                 
                 $(this).css({ // blur out buttons
@@ -556,6 +595,7 @@ $(function() {
                 
                 clearInterval(slot2intr);
                 drawSlot(2);
+                correctSlotPosition(2);
                 wheelsSpinning--;
                 
                 $(this).css({ // blur out buttons
@@ -577,6 +617,7 @@ $(function() {
                 
                 clearInterval(slot3intr);
                 drawSlot(3);
+                correctSlotPosition(3);
                 wheelsSpinning--;
                 
                 $(this).css({ // blur out buttons
@@ -598,12 +639,17 @@ $(function() {
             game = true;
             
 
-        } else { // If game is running
+        } 
+        
+        else { // If game is running
             
-            $('.spin').val('Spin slots!');
             clearInterval(slot1intr);
             clearInterval(slot2intr);
             clearInterval(slot3intr);
+            
+            correctSlotPosition(1);
+            correctSlotPosition(2);
+            correctSlotPosition(3);
             
             $('.stop1').css({ // blur out buttons
                 'background': '#CCC',
@@ -623,6 +669,7 @@ $(function() {
                 'border': '1px solid #FFF',
             }).val(slot[3].obj.name); // replace name
             
+            $('.spin').val('Spin slots!');
             game = false;
 
         } // end else
