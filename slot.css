@@ -32,16 +32,6 @@
     box-shadow: inset 0 -50px 200px 0 #400;
 }
 
-.cssfilters #machineWindow {
-    -webkit-filter: grayscale(30%);
-    -mox-filter: grayscale(30%);
-}
-
-.cssfilters #machineWindow.blur {
-    -webkit-filter: grayscale(30%);
-    -mox-filter: grayscale(30%);
-}
-
 .canvasWrap {
     display: block;
     margin: 0 auto;
