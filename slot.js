@@ -424,6 +424,10 @@ $(function() {
         var pointsAdd = 0; // base points
         var pointsMulti = 1; // multiplied by this
         var totalPoints = 0;
+        
+        var RGB = '';
+        var BELLS = '';
+        var MILLION = '';
 
         for (i = 1; i < 4; i++) { // add points
             
@@ -442,6 +446,7 @@ $(function() {
                 // if 3 bells give a set amount of points because bells add score is 0, so 3 bells = 0 * 216 = 0 which sucks
                 
                 totalPoints = 216000; // 216,000 (1000 * the bells multiplier so it's a fitting number, not arbitrary)
+                BELLS = ' - BELLS!';
                 
             }
             
@@ -462,6 +467,14 @@ $(function() {
 
             case 'gem':
                 totalPoints *= 5;
+                
+                if (slot[1].obj.name === 'Ruby' && slot[2].obj.name === 'Emerald' && slot[3].obj.name === 'Sapphire') { // RBG
+                
+                totalPoints *= 25;
+                RGB = ' - RGB!';
+                
+                } // end if
+                
                 break;
 
             case 'fruit':
@@ -485,7 +498,11 @@ $(function() {
             
         } // end else
         
-        $('.score').text('Score: ' + numberWithCommas(totalPoints)); // Insert score with commas (50000 -> 50,000)
+        if (totalPoints > 1000000) { // Millionaire
+            MILLION = ' - MILLIONAIRE';
+        }
+        
+        $('.score').text('Score:  ' + '$ ' + numberWithCommas(totalPoints) + RGB + BELLS + MILLION); // Insert score with commas (50000 -> 50,000)
         return totalPoints;
 
     } // end calculatePoints()
@@ -596,7 +613,7 @@ $(function() {
             var wheelsSpinning = 3;
             
             $('.stop1').click(function () {
-                console.log(slot);
+
                 clearInterval(slot1intr);
                 drawSlot(1);
                 correctSlotPosition(1);
@@ -619,7 +636,7 @@ $(function() {
             }); // end stop1 click
             
             $('.stop2').click(function () {
-                console.log(slot);
+
                 clearInterval(slot2intr);
                 drawSlot(2);
                 correctSlotPosition(2);
@@ -642,7 +659,7 @@ $(function() {
             }); // end stop2 click
             
             $('.stop3').click(function () {
-                console.log(slot);
+
                 clearInterval(slot3intr);
                 drawSlot(3);
                 correctSlotPosition(3);
