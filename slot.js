@@ -9,6 +9,10 @@ $(function() {
     var c = document.getElementById('machineWindow').getContext('2d');
     c.width = 800;
     c.height = 300;
+    var image = {
+        height: 200,
+        width: 250,
+    }
     var slotArray = [
         [],
         [],
@@ -147,8 +151,8 @@ $(function() {
 
         'bells': {
 
-            points: 1500,
-            mult: 1,
+            points: 0,
+            mult: 8,
             img: 'slotbells.png',
             type: 'points',
             name: 'Bells',
@@ -157,7 +161,7 @@ $(function() {
 
         'redgem': {
 
-            points: 1000,
+            points: 5000,
             mult: 1,
             img: 'slotredgem.png',
             type: 'gem',
@@ -167,7 +171,7 @@ $(function() {
 
         'greengem': {
 
-            points: 1000,
+            points: 3000,
             mult: 1,
             img: 'slotgreengem.png',
             type: 'gem',
@@ -177,7 +181,7 @@ $(function() {
 
         'bluegem': {
 
-            points: 1000,
+            points: 2000,
             mult: 1,
             img: 'slotbluegem.png',
             type: 'gem',
@@ -234,7 +238,7 @@ $(function() {
             3: 2,
         };
         
-        /*getSlotOrder(1); // fill the slots
+        getSlotOrder(1); // fill the slots
         getSlotOrder(2);
         getSlotOrder(3);
         
@@ -259,11 +263,8 @@ $(function() {
             } // end for
     
         } // end for 
-        */
         
-        slotWheel[1] = [prizes.seven, prizes.bar, prizes.bells, prizes.redgem, prizes.greengem, prizes.bluegem, prizes.melon, prizes.cherry];
-        slotWheel[2] = [prizes.seven, prizes.bar, prizes.bells, prizes.redgem, prizes.greengem, prizes.bluegem, prizes.melon, prizes.cherry];
-        slotWheel[3] = [prizes.seven, prizes.bar, prizes.bells, prizes.redgem, prizes.greengem, prizes.bluegem, prizes.melon, prizes.cherry];
+        console.log(slotWheel[1],slotWheel[2],slotWheel[3]);
 
     } // end resetGame()
 
@@ -296,10 +297,10 @@ $(function() {
             c.clearRect(0, 0, 275, c.height);
         } 
         else if (slotNum == 2) {
-            c.clearRect(275, 0, 250, c.height);
+            c.clearRect(275, 0, image.width, c.height);
         } 
         else if (slotNum == 3) {
-            c.clearRect(525, 0, 250, c.height);
+            c.clearRect(525, 0, image.width, c.height);
         }
         
         var p = 0;
@@ -308,8 +309,8 @@ $(function() {
             
             $("canvas").drawImage({
                 source: slotWheel[slotNum][i].img,
-                x: 150 + (250 * (slotNum - 1)), // 150, 400, 650
-                y: (200 * i) - 50 - slotWheel.position[slotNum - 1], 
+                x: 150 + (image.width * (slotNum - 1)), // 150, 400, 650
+                y: (image.height * i) - 50 - slotWheel.position[slotNum - 1], 
             });
             
             p++;
@@ -320,8 +321,8 @@ $(function() {
             
             $("canvas").drawImage({
                 source: slotWheel[slotNum][i].img,
-                x: 150 + (250 * (slotNum - 1)), // 150, 400, 650
-                y: (200 * p) - 50 - slotWheel.position[slotNum - 1], 
+                x: 150 + (image.width * (slotNum - 1)), // 150, 400, 650
+                y: (image.height * p) - 50 - slotWheel.position[slotNum - 1], 
             });
             
             p++;
@@ -372,44 +373,44 @@ $(function() {
     } // end spin()
 
 
-    function correctSlotPosition(slotNum) { // get closest to y: 150. 
+    function correctSlotPosition(slotNum) { // get closest to y: 150. the most complicated code here; it doesn't even make sense
         
         if (currentObj[slotNum] !== undefined) {
             
             j = 1;
             k = 1;
             
-            slotWheel.position[slotNum - 1] = Math.round(slotWheel.position[slotNum - 1]); 
+            slotWheel.position[slotNum - 1] = Math.round(slotWheel.position[slotNum - 1]); // use integers or % won't work
             
-            while (slotWheel.position[slotNum - 1] % 200 !== 0) {
+            while (slotWheel.position[slotNum - 1] % image.height !== 0) { // adjust for image height (200)
                 
                 slotWheel.position[slotNum - 1] += k;
                 k *= -1;
                 j *= -1;
-                k += j; // k is equal to the distance from y: 150
+                k += j; // k is equal to the distance from y: 150.  how this works: goes up 1, down 2 etc: (+1, -2, +3, -4, +5, -6...)
                 
             } // end while
+        
+            currentObj[slotNum] -= 2; // To adjust for starting at slot 2, which is done because it works visually to line up the slots for some reason
             
-            currentObj[slotNum] -= 2;
-            
-            if (k < 0) {
+            if (k < 0 || k == 1) { // I have no fucking idea why this works but it does
                 currentObj[slotNum] += 1;    
             }
             
-            if (currentObj[slotNum] == -2) {
+            if (currentObj[slotNum] == -2) { // loop back
                 currentObj[slotNum] = 6;
             } 
             
-            if (currentObj[slotNum] == -1) {
+            if (currentObj[slotNum] == -1) { // loop back
                 currentObj[slotNum] = 7;
             }
             
-            if (currentObj[slotNum] == 8) {
+            if (currentObj[slotNum] == 8) { // loop forward
                 currentObj[slotNum] = 0;
             }
             
-            spin(slotNum, currentObj[slotNum]);
-            delete currentObj[slotNum];
+            spin(slotNum, currentObj[slotNum]); // actually change the value
+            delete currentObj[slotNum]; // so it doesn't execute |currentObj[slotNum] -= 2;| or the others and change values when all 3 slots are done
             
         }
         
@@ -420,37 +421,29 @@ $(function() {
 
     function calculatePoints() {
 
-        var currentSlots = [];
         var pointsAdd = 0; // base points
         var pointsMulti = 1; // multiplied by this
         var totalPoints = 0;
 
-        for (var slotsKey in slot) {
-
-            currentSlots.push(slot[slotsKey].obj);
-
-        } // end for var key in slots
-
-        for (i = 0; i < 3; i++) {
-
-            for (var prizeKey in prizes) {
-
-                if (prizes[prizeKey].img == currentSlots[i].img) {
-
-                    pointsAdd += prizes[prizeKey].points;
-                    pointsMulti *= prizes[prizeKey].mult;
-
-                } // end if slot match
-
-            } // end for var key in prizes
-
-        } // end for i
+        for (i = 1; i < 4; i++) { // add points
+            
+            pointsAdd += slot[i].obj.points;
+            pointsMulti *= slot[i].obj.mult;
+            
+        } // end for
 
         totalPoints = pointsAdd * pointsMulti;
 
-        if ((currentSlots[0] == currentSlots[1]) && (currentSlots[1] == currentSlots[2])) { // if a triple match
+        if ((slot[1].obj == slot[2].obj) && (slot[2].obj == slot[3].obj)) { // if a triple match
 
             totalPoints *= 10;
+            
+            if (slot[1].obj.name === 'Bells' && slot[2].obj.name === 'Bells' && slot[3].obj.name === 'Bells') { 
+                // if 3 bells give a set amount of points because bells add score is 0, so 3 bells = 0 * 216 = 0 which sucks
+                
+                totalPoints = 216000; // 216,000 (1000 * the bells multiplier so it's a fitting number, not arbitrary)
+                
+            }
             
             $('#machineWindow').css({ // glow
                 '-webkit-filter': 'grayscale(0%)',
@@ -458,10 +451,10 @@ $(function() {
             });
             
 
-        } 
-        else if ((currentSlots[0].type === currentSlots[1].type) && (currentSlots[1].type === currentSlots[2].type)) { // if similar types
+        } // end if
+        else if ((slot[1].obj.type === slot[2].obj.type) && (slot[2].obj.type === slot[3].obj.type)) { // if similar types
 
-            switch (currentSlots[0].type) {
+            switch (slot[1].obj.type) {
 
             case 'points':
                 totalPoints *= 2;
@@ -478,8 +471,8 @@ $(function() {
             } // end switch
             
             $('#machineWindow').css({ //glow less brightly
-                '-webkit-filter': 'grayscale(15%)',
-                '-mox-filter': 'grayscale(15%)',   
+                '-webkit-filter': 'grayscale(20%)',
+                '-mox-filter': 'grayscale(20%)',   
             });
 
         } // end elseif
@@ -490,8 +483,9 @@ $(function() {
                 '-mox-filter': 'grayscale(40%)',   
             });
             
-        }
-
+        } // end else
+        
+        $('.score').text('Score: ' + numberWithCommas(totalPoints)); // Insert score with commas (50000 -> 50,000)
         return totalPoints;
 
     } // end calculatePoints()
@@ -509,14 +503,14 @@ $(function() {
         if (game === false) {
 
             resetGame();
-    
-            slot[1].speed = randomInteger(25,50);
-            slot[2].speed = randomInteger(25,50);
-            slot[3].speed = randomInteger(25,50);
             
-            var wheel1incr = 0, wheelSpeed1 = 200 / slot[1].speed;
-            var wheel2incr = 0, wheelSpeed2 = 200 / slot[2].speed;
-            var wheel3incr = 0, wheelSpeed3 = 200 / slot[3].speed;   
+            slot[1].speed = randomInteger(12, 38);
+            slot[2].speed = randomInteger(12, 38);
+            slot[3].speed = randomInteger(12, 38);
+            
+            var wheel1incr = 0, wheelSpeed1 = image.height / slot[1].speed;
+            var wheel2incr = 0, wheelSpeed2 = image.height / slot[2].speed;
+            var wheel3incr = 0, wheelSpeed3 = image.height / slot[3].speed;   
             
             var redrawNum = 1600;
             
@@ -541,8 +535,7 @@ $(function() {
                 
                 drawSlot(1);
                 wheel1incr++;
-                
-                $('.score').text('Score: ' + numberWithCommas(calculatePoints())); // Insert score with commas (50000 -> 50,000)
+                calculatePoints();
                 
             }, 1); // end interval
             
@@ -567,8 +560,7 @@ $(function() {
                 
                 drawSlot(2);
                 wheel2incr++;
-                
-                $('.score').text('Score: ' + numberWithCommas(calculatePoints())); // Insert score with commas (50000 -> 50,000)
+                calculatePoints();
                 
             }, 1); // end interval
             
@@ -593,8 +585,7 @@ $(function() {
                 
                 drawSlot(3);
                 wheel3incr++;
-                
-                $('.score').text('Score: ' + numberWithCommas(calculatePoints())); // Insert score with commas (50000 -> 50,000)
+                calculatePoints();
                 
             }, 1); // end interval
             
@@ -605,7 +596,7 @@ $(function() {
             var wheelsSpinning = 3;
             
             $('.stop1').click(function () {
-                
+                console.log(slot);
                 clearInterval(slot1intr);
                 drawSlot(1);
                 correctSlotPosition(1);
@@ -628,7 +619,7 @@ $(function() {
             }); // end stop1 click
             
             $('.stop2').click(function () {
-                
+                console.log(slot);
                 clearInterval(slot2intr);
                 drawSlot(2);
                 correctSlotPosition(2);
@@ -651,7 +642,7 @@ $(function() {
             }); // end stop2 click
             
             $('.stop3').click(function () {
-                
+                console.log(slot);
                 clearInterval(slot3intr);
                 drawSlot(3);
                 correctSlotPosition(3);
@@ -689,6 +680,8 @@ $(function() {
             correctSlotPosition(2);
             correctSlotPosition(3);
             
+            calculatePoints();
+            
             $('.stop1').css({ // blur out buttons
                 'background': '#CCC',
                 'color': '#777',
@@ -719,3 +712,9 @@ $(function() {
     
 
 }); // end script
+
+
+
+
+
+
